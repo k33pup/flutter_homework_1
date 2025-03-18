@@ -95,7 +95,6 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  // Кнопки перемещены выше – сразу после изображения
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
