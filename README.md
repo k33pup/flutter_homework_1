@@ -35,9 +35,11 @@
    ```
 
 ## Скриншоты
+![example_1](https://github.com/user-attachments/assets/d3fb87f0-961d-49be-96b6-1a6777020297)
+![example_2](https://github.com/user-attachments/assets/95539441-e244-4384-b448-5151ceb0931e)
 
 ## Скачать APK
-[](#)
+[Скачать](https://github.com/k33pup/flutter_homework_1/releases/tag/v1.0.0)
 
 ## Технологии
 - **Flutter** — для разработки UI.
