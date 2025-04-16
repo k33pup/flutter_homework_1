@@ -8,11 +8,9 @@ class ApiService {
       'live_8KK4VsmoWJDm94Mm2f5Ts5nf0sukUT4wAMOMFfYF8h16Xn0ALFPiK9a9gsiyb3zo';
 
   static Future<Cat?> fetchCat() async {
-    final url = Uri.https(
-      'api.thecatapi.com',
-      '/v1/images/search',
-      {'has_breeds': '1'},
-    );
+    final url = Uri.https('api.thecatapi.com', '/v1/images/search', {
+      'has_breeds': '1',
+    });
 
     try {
       final response = await http.get(url, headers: {'x-api-key': _apiKey});
@@ -20,7 +18,8 @@ class ApiService {
         final List data = json.decode(response.body);
         if (data.isNotEmpty) {
           final catData = data[0];
-          if (catData['breeds'] != null && (catData['breeds'] as List).isNotEmpty) {
+          if (catData['breeds'] != null &&
+              (catData['breeds'] as List).isNotEmpty) {
             final breed = catData['breeds'][0];
             return Cat(
               imageUrl: catData['url'] ?? '',
@@ -40,5 +39,4 @@ class ApiService {
     }
     return null;
   }
-
 }
