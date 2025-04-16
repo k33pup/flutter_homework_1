@@ -78,6 +78,10 @@
    ```
 
 ## Скриншоты
+![423984185-d3fb87f0-961d-49be-96b6-1a6777020297](https://github.com/user-attachments/assets/17abba94-4e9a-4214-9c39-9240a2d50a8c)
+![423984277-95539441-e244-4384-b448-5151ceb0931e](https://github.com/user-attachments/assets/14339512-2dd8-4ae3-9846-62ec114ae923)
+![Screenshot_20250416_123712](https://github.com/user-attachments/assets/17a54391-9f68-446f-be6c-f540cf42b102)
+
 
 ## Скачать APK
 [](#)
