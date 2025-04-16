@@ -4,6 +4,7 @@ class Cat {
   final String breedDescription;
   final String breedTemperament;
   final String breedOrigin;
+  final DateTime? likedDate;
 
   Cat({
     required this.imageUrl,
@@ -11,5 +12,17 @@ class Cat {
     required this.breedDescription,
     required this.breedTemperament,
     required this.breedOrigin,
+    this.likedDate,
   });
+
+  Cat copyWith({DateTime? likedDate}) {
+    return Cat(
+      imageUrl: imageUrl,
+      breedName: breedName,
+      breedDescription: breedDescription,
+      breedTemperament: breedTemperament,
+      breedOrigin: breedOrigin,
+      likedDate: likedDate ?? this.likedDate,
+    );
+  }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import '../models/cat.dart';
-import '../services/api_service.dart';
+import 'package:get_it/get_it.dart';
+import '../../domain/models/cat.dart';
+import '../../data/api_service.dart';
 import '../widgets/like_button.dart';
 import '../widgets/dislike_button.dart';
 import 'detail_screen.dart';
+import '../cubits/liked_cats_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,19 +19,45 @@ class HomeScreenState extends State<HomeScreen> {
   int _likeCount = 0;
   bool _isLoading = false;
 
+  final _likedCatsCubit = GetIt.instance<LikedCatsCubit>();
+
   Future<void> _fetchCat() async {
     setState(() {
       _isLoading = true;
     });
-    final cat = await ApiService.fetchCat();
-    if (cat != null) {
-      setState(() {
-        _currentCat = cat;
-      });
+    try {
+      final cat = await ApiService.fetchCat();
+      if (!mounted) return;
+      if (cat != null) {
+        setState(() {
+          _currentCat = cat;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      _showErrorDialog(context, 'Ошибка сети при получении котика');
     }
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            title: Text('Ошибка'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('ОК'),
+              ),
+            ],
+          ),
+    );
   }
 
   @override
@@ -42,6 +70,9 @@ class HomeScreenState extends State<HomeScreen> {
     setState(() {
       _likeCount++;
     });
+    if (_currentCat != null) {
+      _likedCatsCubit.addCat(_currentCat!);
+    }
     _fetchCat();
   }
 
@@ -52,7 +83,16 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Кототиндер"), leading: Icon(Icons.pets)),
+      appBar: AppBar(
+        title: Text("Кототиндер"),
+        leading: Icon(Icons.pets),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.favorite),
+            onPressed: () => Navigator.pushNamed(context, '/liked'),
+          ),
+        ],
+      ),
       body:
           _isLoading || _currentCat == null
               ? Center(child: CircularProgressIndicator())
