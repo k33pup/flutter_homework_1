@@ -85,7 +85,7 @@
 
 
 ## Скачать APK
-[Скачать](https://github.com/k33pup/flutter_homework_1/releases/tag/v1.0.0)
+[Скачать](https://github.com/k33pup/flutter_homework_1/releases/tag/v1.0.1)
 
 ## Технологии
 - **Flutter** — UI Framework.
