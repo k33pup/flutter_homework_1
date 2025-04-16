@@ -1,16 +1,17 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../models/cat.dart';
+import '../domain/models/cat.dart';
 
 class ApiService {
   static const String _apiKey =
       'live_8KK4VsmoWJDm94Mm2f5Ts5nf0sukUT4wAMOMFfYF8h16Xn0ALFPiK9a9gsiyb3zo';
-  static const String _baseUrl =
-      'https://api.thecatapi.com/v1/images/search?has_breeds=1';
 
   static Future<Cat?> fetchCat() async {
-    final url = Uri.parse(_baseUrl);
+    final url = Uri.https('api.thecatapi.com', '/v1/images/search', {
+      'has_breeds': '1',
+    });
+
     try {
       final response = await http.get(url, headers: {'x-api-key': _apiKey});
       if (response.statusCode == 200) {
@@ -34,6 +35,7 @@ class ApiService {
       }
     } catch (e) {
       debugPrint('Ошибка: $e');
+      throw Exception('Ошибка сети');
     }
     return null;
   }

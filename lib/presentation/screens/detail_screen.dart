@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/cat.dart';
+import '../../domain/models/cat.dart';
 
 class DetailScreen extends StatelessWidget {
   final Cat cat;
 
-  const DetailScreen({super.key, required this.cat});
+  const DetailScreen({required this.cat, super.key});
 
   @override
   Widget build(BuildContext context) {
