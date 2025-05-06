@@ -1,30 +1,66 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus_platform_interface/connectivity_plus_platform_interface.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:network_image_mock/network_image_mock.dart';
 
 import 'package:cat_tinder/main.dart';
+import 'package:cat_tinder/service_locator.dart';
+import 'package:cat_tinder/presentation/cubits/liked_cats_cubit.dart';
+import 'package:cat_tinder/data/api_service.dart';
+import 'package:cat_tinder/domain/models/cat.dart';
 
-void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+class FakeConnectivityPlatform extends ConnectivityPlatform {
+  @override
+  Stream<List<ConnectivityResult>> get onConnectivityChanged =>
+      Stream.value([ConnectivityResult.wifi]);
+}
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+void _setUpFakeConnectivity() {
+  ConnectivityPlatform.instance = FakeConnectivityPlatform();
+}
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+Future<void> main() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  SharedPreferences.setMockInitialValues({});
+
+  await dotenv.load(fileName: 'assets/.env');
+
+  ApiService.client = MockClient((_) async {
+    final sampleCat = Cat.sample();
+    final fakeJson = jsonEncode([
+      {
+        'url': sampleCat.imageUrl,
+        'breeds': [
+          {
+            'name': sampleCat.breedName,
+            'description': sampleCat.breedDescription,
+            'temperament': sampleCat.breedTemperament,
+            'origin': sampleCat.breedOrigin,
+          },
+        ],
+      },
+    ]);
+    return http.Response(fakeJson, 200);
+  });
+
+  _setUpFakeConnectivity();
+
+  setupLocator();
+  await GetIt.instance<LikedCatsCubit>().init();
+
+  testWidgets('App shows title and initial like count', (tester) async {
+    await mockNetworkImagesFor(() async {
+      await tester.pumpWidget(const MyApp());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Кототиндер'), findsOneWidget);
+      expect(find.text('Лайков: 0'), findsOneWidget);
+    });
   });
 }

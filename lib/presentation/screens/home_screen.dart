@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import '../../domain/models/cat.dart';
@@ -6,6 +7,7 @@ import '../widgets/like_button.dart';
 import '../widgets/dislike_button.dart';
 import 'detail_screen.dart';
 import '../cubits/liked_cats_cubit.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -82,6 +84,14 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Stream<ConnectivityResult> connectivityStream;
+    try {
+      connectivityStream = Connectivity().onConnectivityChanged
+          .map((list) => list.first)
+          .handleError((_) {});
+    } catch (e) {
+      connectivityStream = Stream.value(ConnectivityResult.none);
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Кототиндер"),
@@ -93,14 +103,29 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body:
-          _isLoading || _currentCat == null
-              ? Center(child: CircularProgressIndicator())
+      body: StreamBuilder<ConnectivityResult>(
+        stream: connectivityStream,
+        initialData: ConnectivityResult.wifi,
+        builder: (context, snapshot) {
+          final status = snapshot.data ?? ConnectivityResult.wifi;
+          if (status == ConnectivityResult.none) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Вы в офлайн‑режиме')),
+              );
+            });
+          }
+
+          return _isLoading || _currentCat == null
+              ? const Center(child: CircularProgressIndicator())
               : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Лайков: $_likeCount", style: TextStyle(fontSize: 20)),
-                  SizedBox(height: 20),
+                  Text(
+                    "Лайков: $_likeCount",
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(height: 20),
                   Expanded(
                     child: Center(
                       child: Dismissible(
@@ -124,33 +149,45 @@ class HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           },
-                          child: Image.network(
-                            _currentCat!.imageUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: _currentCat!.imageUrl,
                             fit: BoxFit.cover,
                             height: 300,
                             width: double.infinity,
+                            placeholder:
+                                (context, url) => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                            errorWidget:
+                                (context, url, error) =>
+                                    const Center(child: Icon(Icons.error)),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DislikeButton(onPressed: _handleDislike),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       LikeButton(onPressed: _handleLike),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Text(
                     _currentCat!.breedName,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
-              ),
+              );
+        },
+      ),
     );
   }
 }

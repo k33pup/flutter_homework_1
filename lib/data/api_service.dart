@@ -1,28 +1,28 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../domain/models/cat.dart';
 
 class ApiService {
-  static const String _apiKey =
-      'live_8KK4VsmoWJDm94Mm2f5Ts5nf0sukUT4wAMOMFfYF8h16Xn0ALFPiK9a9gsiyb3zo';
+  static http.Client client = http.Client();
+
+  static final String _apiKey = dotenv.env['THE_CAT_API_KEY']!;
+  static final Uri url = Uri.https('api.thecatapi.com', '/v1/images/search', {
+    'has_breeds': '1',
+  });
 
   static Future<Cat?> fetchCat() async {
-    final url = Uri.https('api.thecatapi.com', '/v1/images/search', {
-      'has_breeds': '1',
-    });
-
     try {
-      final response = await http.get(url, headers: {'x-api-key': _apiKey});
+      final response = await client.get(url, headers: {'x-api-key': _apiKey});
       if (response.statusCode == 200) {
         final List data = json.decode(response.body);
         if (data.isNotEmpty) {
-          final catData = data[0];
-          if (catData['breeds'] != null &&
-              (catData['breeds'] as List).isNotEmpty) {
-            final breed = catData['breeds'][0];
+          final m = data[0] as Map<String, dynamic>;
+          if ((m['breeds'] as List).isNotEmpty) {
+            final breed = m['breeds'][0] as Map<String, dynamic>;
             return Cat(
-              imageUrl: catData['url'] ?? '',
+              imageUrl: m['url'] ?? '',
               breedName: breed['name'] ?? 'Неизвестно',
               breedDescription: breed['description'] ?? 'Нет описания',
               breedTemperament: breed['temperament'] ?? 'Нет информации',
