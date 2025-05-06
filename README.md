@@ -72,7 +72,9 @@
    ```
 
 ## Скриншоты
-
+![434266700-17abba94-4e9a-4214-9c39-9240a2d50a8c](https://github.com/user-attachments/assets/13573eb5-5935-493a-88bd-cddb1ed76884)
+![434266799-14339512-2dd8-4ae3-9846-62ec114ae923](https://github.com/user-attachments/assets/cfaa4441-5576-4b36-8ec9-70159399c223)
+![434266870-17a54391-9f68-446f-be6c-f540cf42b102](https://github.com/user-attachments/assets/62e60bf2-8a1d-4232-9ed1-ad35f9af3c5d)
 
 ## Скачать APK
 [Скачать последнюю версию APK]()
