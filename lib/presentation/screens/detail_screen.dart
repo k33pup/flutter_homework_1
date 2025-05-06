@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../domain/models/cat.dart';
 
@@ -14,11 +15,15 @@ class DetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Image.network(
-              cat.imageUrl,
+            CachedNetworkImage(
+              imageUrl: cat.imageUrl,
               height: 250,
-              fit: BoxFit.cover,
               width: double.infinity,
+              fit: BoxFit.cover,
+              placeholder:
+                  (ctx, url) =>
+                      const Center(child: CircularProgressIndicator()),
+              errorWidget: (ctx, url, err) => const Icon(Icons.error),
             ),
             SizedBox(height: 20),
             Text(

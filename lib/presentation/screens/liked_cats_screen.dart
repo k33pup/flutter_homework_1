@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import '../../domain/models/cat.dart';
 import '../cubits/liked_cats_cubit.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class LikedCatsScreen extends StatefulWidget {
   const LikedCatsScreen({super.key});
@@ -76,10 +77,22 @@ class LikedCatsScreenState extends State<LikedCatsScreen> {
                                 vertical: 5,
                               ),
                               child: ListTile(
-                                leading: Image.network(
-                                  cat.imageUrl,
-                                  width: 80,
-                                  height: 80,
+                                leading: CachedNetworkImage(
+                                  imageUrl: cat.imageUrl,
+                                  placeholder:
+                                      (_, __) => const SizedBox(
+                                        width: 40,
+                                        height: 40,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      ),
+                                  errorWidget:
+                                      (_, __, ___) => const Icon(Icons.error),
+                                  width: 40,
+                                  height: 40,
                                   fit: BoxFit.cover,
                                 ),
                                 title: Text(cat.breedName),
