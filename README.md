@@ -77,7 +77,7 @@
 ![434266870-17a54391-9f68-446f-be6c-f540cf42b102](https://github.com/user-attachments/assets/62e60bf2-8a1d-4232-9ed1-ad35f9af3c5d)
 
 ## Скачать APK
-[Скачать последнюю версию APK]()
+[Скачать последнюю версию APK](https://github.com/k33pup/flutter_homework_1/releases/tag/v1.0.2)
 
 ## Технологии
 
